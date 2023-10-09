@@ -3,16 +3,16 @@ use std::str::FromStr;
 use anyhow::bail;
 
 #[derive(PartialEq, PartialOrd, Debug)]
-struct ChunkType([u8; 4]);
+pub struct ChunkType([u8; 4]);
 
 impl ChunkType {
-    fn bytes(&self) -> [u8; 4] {
+    pub fn bytes(&self) -> [u8; 4] {
         return self.0;
     }
 
     /// For convenience in description and in examining PNG files, type codes are restricted to consist of uppercase and lowercase ASCII
     /// letters (A-Z and a-z, or 65-90 and 97-122 decimal).
-    fn is_valid(&self) -> bool {
+    pub fn is_valid(&self) -> bool {
         self.0.iter().all(u8::is_ascii_alphabetic) && self.is_reserved_bit_valid()
     }
 
@@ -23,7 +23,7 @@ impl ChunkType {
     /// Chunks that are necessary for successful display of the file's contents are called "critical" chunks. A decoder encountering an unknown
     /// chunk in which the ancillary bit is 0 must indicate to the user that the image contains information it cannot safely interpret. The image
     ///  header chunk (IHDR) is an example of a critical chunk.
-    fn is_critical(&self) -> bool {
+    pub fn is_critical(&self) -> bool {
         self.0[0].is_ascii_uppercase()
     }
 
@@ -32,7 +32,7 @@ impl ChunkType {
     /// second letter, while public chunks will always be assigned names with uppercase second letters. Note that decoders do not need to
     /// test the private-chunk property bit, since it has no functional significance; it is simply an administrative convenience to ensure
     /// that public and private chunk names will not conflict. See Additional chunk types, and Recommendations for Encoders: Use of private chunks.
-    fn is_public(&self) -> bool {
+    pub fn is_public(&self) -> bool {
         self.0[1].is_ascii_uppercase()
     }
 
@@ -40,7 +40,7 @@ impl ChunkType {
     /// chunk names must have uppercase third letters. (Decoders should not complain about a lowercase third letter, however, as some future
     /// version of the PNG specification could define a meaning for this bit. It is sufficient to treat a chunk with a lowercase third letter
     /// in the same way as any other unknown chunk type.)
-    fn is_reserved_bit_valid(&self) -> bool {
+    pub fn is_reserved_bit_valid(&self) -> bool {
         self.0[2].is_ascii_uppercase()
     }
 
@@ -59,7 +59,7 @@ impl ChunkType {
     ///
     ///  PNG editors that do not recognize a critical chunk must report an error and refuse to process that PNG file at all. The safe/unsafe mechanism
     /// is intended for use with ancillary chunks. The safe-to-copy bit will always be 0 for critical chunks.
-    fn is_safe_to_copy(&self) -> bool {
+    pub fn is_safe_to_copy(&self) -> bool {
         self.0[3].is_ascii_lowercase()
     }
 }
