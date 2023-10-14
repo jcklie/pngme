@@ -1,6 +1,6 @@
 # pngme
 
-This small tool allows you to hide secret messages in PNG files by encoding them as ancillary chunks. It is based on the excellent [pngme boo](https://picklenerd.github.io/pngme_book/introduction.html).
+This small tool allows you to hide secret messages in PNG files by encoding them as ancillary chunks. It is based on the excellent [pngme book](https://picklenerd.github.io/pngme_book/introduction.html).
 
 ```bash
 $ pngme encode Example.png ruSt "I like reindeer"
