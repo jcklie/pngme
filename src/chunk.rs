@@ -4,29 +4,30 @@ use anyhow::{bail, Context};
 
 use crate::chunk_type::ChunkType;
 
-struct Chunk {
+#[derive(Debug)]
+pub struct Chunk {
     chunk_type: ChunkType,
     data: Vec<u8>,
 }
 
 impl Chunk {
-    fn new(chunk_type: ChunkType, data: Vec<u8>) -> Chunk {
+    pub fn new(chunk_type: ChunkType, data: Vec<u8>) -> Chunk {
         Chunk { chunk_type, data }
     }
 
-    fn length(&self) -> u32 {
+    pub fn length(&self) -> u32 {
         self.data.len() as u32
     }
 
-    fn chunk_type(&self) -> &ChunkType {
+    pub fn chunk_type(&self) -> &ChunkType {
         &self.chunk_type
     }
 
-    fn data(&self) -> &[u8] {
+    pub fn data(&self) -> &[u8] {
         &self.data
     }
 
-    fn crc(&self) -> u32 {
+    pub fn crc(&self) -> u32 {
         let crc: crc::Crc<u32> = crc::Crc::<u32>::new(&crc::CRC_32_ISO_HDLC);
 
         let mut digest = crc.digest();
@@ -36,13 +37,13 @@ impl Chunk {
         digest.finalize()
     }
 
-    fn data_as_string(&self) -> super::Result<String> {
+    pub fn data_as_string(&self) -> super::Result<String> {
         std::str::from_utf8(&self.data)
             .with_context(|| format!("Failed to read chunk data as string"))
             .map(|s| s.into())
     }
 
-    fn as_bytes(&self) -> Vec<u8> {
+    pub fn as_bytes(&self) -> Vec<u8> {
         self.length()
             .to_be_bytes()
             .iter()

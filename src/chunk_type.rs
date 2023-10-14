@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use anyhow::bail;
 
-#[derive(PartialEq, PartialOrd, Debug)]
+#[derive(PartialEq, PartialOrd, Debug, Eq)]
 pub struct ChunkType([u8; 4]);
 
 impl ChunkType {
