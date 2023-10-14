@@ -9,3 +9,11 @@ edition = "2021"
 anyhow = "1.0.75"
 clap = { version = "4.4.6", features = ["derive"] }
 crc = "3.0.1"
+
+[lib] 
+name = "pngme" 
+path = "src/lib.rs"
+
+[[bin]]
+name = "pngme"
+path = "src/main.rs"

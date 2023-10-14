@@ -1,5 +1,3 @@
-use std::io::{BufReader, Read};
-
 use anyhow::{bail, Context};
 
 use crate::chunk_type::ChunkType;

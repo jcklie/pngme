@@ -1,51 +1,57 @@
 use std::fmt::Display;
 
-use anyhow::{Context, bail};
+use anyhow::{bail, Context};
 
 use crate::chunk::Chunk;
-use crate::Result;
 use crate::chunk_type::ChunkType;
+use crate::Result;
 use std::str::FromStr;
 
 pub struct Png {
-    chunks: Vec<Chunk>
+    chunks: Vec<Chunk>,
 }
 
 impl Png {
-    pub const STANDARD_HEADER: [u8; 8] = [   137, 80, 78, 71, 13, 10, 26 ,10];
+    pub const STANDARD_HEADER: [u8; 8] = [137, 80, 78, 71, 13, 10, 26, 10];
 
     pub fn from_chunks(chunks: Vec<Chunk>) -> Png {
         Png { chunks }
     }
-    
+
     pub fn append_chunk(&mut self, chunk: Chunk) {
         self.chunks.push(chunk)
     }
-    
+
     pub fn remove_chunk(&mut self, chunk_type: &str) -> Result<Chunk> {
         let target_chunk_type = ChunkType::from_str(chunk_type)?;
 
-        let idx = self.chunks.iter().position(|chunk| chunk.chunk_type() == &target_chunk_type)
+        let idx = self
+            .chunks
+            .iter()
+            .position(|chunk| chunk.chunk_type() == &target_chunk_type)
             .with_context(|| format!("Did not find chunk with type: '{}'", chunk_type))?;
 
         Ok(self.chunks.remove(idx))
     }
-    
+
     pub fn header(&self) -> &[u8; 8] {
         &Png::STANDARD_HEADER
     }
-    
+
     pub fn chunks(&self) -> &[Chunk] {
         &self.chunks
     }
-    
+
     pub fn chunk_by_type(&self, chunk_type: &str) -> Option<&Chunk> {
         let target_chunk_type = ChunkType::from_str(chunk_type).ok()?;
 
-        self.chunks.iter().find(|chunk| chunk.chunk_type() == &target_chunk_type)
-            .with_context(|| format!("Did not find chunk with type: '{}'", chunk_type)).ok()
+        self.chunks
+            .iter()
+            .find(|chunk| chunk.chunk_type() == &target_chunk_type)
+            .with_context(|| format!("Did not find chunk with type: '{}'", chunk_type))
+            .ok()
     }
-    
+
     pub fn as_bytes(&self) -> Vec<u8> {
         let mut result: Vec<u8> = self.header().iter().copied().collect();
 
@@ -55,7 +61,6 @@ impl Png {
 
         result
     }
-
 }
 
 impl TryFrom<&[u8]> for Png {
@@ -83,27 +88,23 @@ impl TryFrom<&[u8]> for Png {
             chunks.push(chunk);
         }
 
-        Ok( Png {chunks})
+        Ok(Png { chunks })
     }
 }
 
 impl Display for Png {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "Png(chunks={:?})",
-            self.chunks
-        )
+        write!(f, "Png(chunks={:?})", self.chunks)
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::chunk_type::ChunkType;
     use crate::chunk::Chunk;
-    use std::convert::TryFrom;
+    use crate::chunk_type::ChunkType;
     use crate::Result;
+    use std::convert::TryFrom;
 
     fn testing_chunks() -> Vec<Chunk> {
         vec![
@@ -195,7 +196,6 @@ mod tests {
         assert!(png.is_err());
     }
 
-
     #[test]
     fn test_list_chunks() {
         let png = testing_png();
@@ -209,7 +209,6 @@ mod tests {
         let chunk = png.chunk_by_type("FrSt").unwrap();
         assert_eq!(&chunk.chunk_type().to_string(), "FrSt");
         assert_eq!(&chunk.data_as_string().unwrap(), "I am the first chunk");
-
     }
 
     #[test]
