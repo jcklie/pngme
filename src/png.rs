@@ -1,4 +1,4 @@
-use std::fmt::{Display, self};
+use std::fmt::Display;
 
 use anyhow::{Context, bail};
 
@@ -76,11 +76,8 @@ impl TryFrom<&[u8]> for Png {
         let mut ptr = 8;
 
         while ptr < bytes.len() {
-            println!("Ptr: {}", ptr);
             let buf = &bytes[ptr..];
             let chunk = Chunk::try_from(buf)?;
-
-            println!("chunk: {}", chunk);
 
             ptr += 12 + chunk.length() as usize;
             chunks.push(chunk);
